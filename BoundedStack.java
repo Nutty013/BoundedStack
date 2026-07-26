@@ -14,7 +14,7 @@ public class BoundedStack {
     //Abstraction Function :AF(elements,capacity) = 
     //Representation Invariant :RI
     //Safety from rep exposure:
-    // -
+    //checkRep
 
     /**
      * 
