@@ -9,9 +9,6 @@ import java.util.*;
 
 public class BoundedStack {
 
-    private final List<String> elements ;
-    private final int capacity ;
-
     //Abstraction Function :
     // AF(elements,capacity) = 
     // ลำดับ [elements.get(0), ..., elements.get(size-1)]
@@ -27,7 +24,10 @@ public class BoundedStack {
     
     //Safety from rep exposure:
     //field ทั้งสองเป็น private final, ไม่มี method ใดคืน reference ของ elements ออกไปตรง ๆ
-    //checkRep() ตรวจ RI ทุกจุดที่ representation อาจเปลี่ยน (เรียกตอนต้น/ท้ายของทุก method)
+    //checkRep() ตรวจ RI ทุกจุดที่ representation อาจเปลี่ยน (เรียกตอนท้ายของทุก method)
+
+    private final List<String> elements ;
+    private final int capacity ;
 
     /**
      * สร้างกองเปล่าที่มีความจุสูงสุดตามที่กำหนดในตอนสร้าง
@@ -36,7 +36,7 @@ public class BoundedStack {
      */
     public BoundedStack(int capacity){
         if (capacity < 0) {
-            throw new IllegalArgumentException("capacity ห้ามติดลบ: " + capacity);
+            throw new IllegalArgumentException("capacity negative -> IllegalArgumentException");
         }
         this.elements = new ArrayList<>();
         this.capacity = capacity;
@@ -51,10 +51,10 @@ public class BoundedStack {
      */
     public void push(String s){
         if (s == null) {
-            throw new IllegalArgumentException("โต๊ะห้ามเป็น null");
+            throw new IllegalArgumentException("table != null");
         }
         if (isFull()) {
-            throw new IllegalStateException("กองเต็ม");
+            throw new IllegalStateException("the stack is full");
         }
         elements.add(s);
         checkRep();
@@ -64,23 +64,23 @@ public class BoundedStack {
      * @return ชื่อโต๊ะที่ว่างล่าสุด
      * @throws IllegalStateException ถ้ากองว่าง
      */
-    public String pop() {
-        if (elements.isEmpty()) {
-        throw new IllegalStateException("กองว่าง");
-        }
-        String s = elements.remove(elements.size() - 1);
-        checkRep();
-        return s;
+        public String pop() {
+            if (elements.isEmpty()) {
+                throw new IllegalStateException("the stack is empty");
+                }
+                String s = elements.remove(elements.size() - 1);
+                checkRep();
+            return s;
     }
 
     /**
-     * ดูว่ากองเต็มหรือไม่โดยไม่เอาโต๊ะออก
-     * @return true ถ้ากองเต็ม, false ถ้าไม่เต็ม
+     * ดูชื่อโต๊ะบนสุดของกองโดยไม่นำออก
+     * @return ชื่อโต๊ะบนสุด
      * @throws IllegalStateException ถ้ากองว่าง
      */
     public String peek() {
         if (elements.isEmpty()) {
-        throw new IllegalStateException("กองว่าง");
+        throw new IllegalStateException("the stack is empty");
         }
         return elements.get(elements.size() - 1);
     }
@@ -111,13 +111,25 @@ public class BoundedStack {
         return size() == capacity();
     }
 
+    /**
+     * สร้าง copy ของกองนี้
+     * @return กองใหม่ที่มีโต๊ะว่างเหมือนกับกองนี้
+     */
+    public BoundedStack copy() {
+        checkRep();
+        BoundedStack copy = new BoundedStack(this.capacity);
+        copy.elements.addAll(this.elements);
+        copy.checkRep();
+        return copy;
+    }
+
     /** checkRep */
     private void checkRep() {
-        assert elements != null : "elements ต้องไม่เป็น null";
-        assert capacity >= 0 : "capacity ต้องไม่ติดลบ";
-        assert 0 <= elements.size() && elements.size() <= capacity : "จำนวนโต๊ะว่างต้องไม่เกิน capacity";
+        assert elements != null : "elements not null";
+        assert capacity >= 0 : "capacity not negative";
+        assert 0 <= elements.size() && elements.size() <= capacity : "elements size < capacity";
         for (String s : elements) {
-            assert s != null : "โต๊ะว่างแต่ละตัวต้องไม่เป็น null";
+            assert s != null : "elements not null";
         }
     }
 }
