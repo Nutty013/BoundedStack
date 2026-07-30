@@ -2,4 +2,31 @@
 
 public BoundedStack{
 
+     // TODO 1: เขียน Abstraction Function ตรงนี้
+    // Abstraction Function:
+    //   AF(songs) = เพลย์ลิสต์ที่ประกอบด้วยชื่อลูกค้าตามลำดับใน Customer โดย Customers.get(0) คือลูกค้าคิวแรกที่ได้หมาล่า
+    // และ Customers.get(i) คือลูกค้าลำดับที่ i+1 ในเพลย์ลิสต์
+
+    // TODO 2: เขียน Representation Invariant ตรงนี้ (4 ข้อ)
+    // Representation Invariant:
+    // 1. Customer ต้องไม่เป็น null
+    // 2. ทุกๆชื่อใน Customers ต้องไม่เป็น null
+    // 3. ทุกชื่อของลูกค้าใน Customers ต้องไม่เป็นสตริงว่าง ("")
+    // 4. จำนวนคิวลูกค้าใน Customers ต้องไม่เกิน MAX_CUSTOMERS (50 คิว)
+
+    // TODO 3: เขียน Safety from rep exposure ตรงนี้
+    // Safety from rep exposure:
+    // ป้องกันการรั่วของ representation โดยไม่คืนค่า Lists โดยตรงออกไปภายนอก ใช้ defensive copy 
+    // เมื่อรับ List จากภายนอก เพื่อป้องกันการแก้ไขข้อมูลภายใน และคืนค่าเป็นสำเนาหรือ unmodifiable list 
+    // เมื่อมีการส่งข้อมูลออก
+
+    // TODO 4: เขียนเงื่อนไขในการเพิ่มลดคิว
+    // 1.สามารถลบคิวออกได้จากการให้เลขคิวและนำชื่อและเลขคิวออกจาก Customers
+    // 2.สามารถเพิ่มคิวเลขต่อจาก50ได้  เมื่อมีการนำคิวออกจาก Customers แต่ก็ยังคงห้ามเกิน 50 คิว
+
+     //TODO 4: เขียน checkRep()
+     //แปลง RI ทุกข้อเป็น assert หนึ่งบรรทัด พร้อมข้อความอธิบาย
+
+  
+
 }
