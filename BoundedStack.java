@@ -30,28 +30,45 @@ public class BoundedStack {
     //checkRep() ตรวจ RI ทุกจุดที่ representation อาจเปลี่ยน (เรียกตอนต้น/ท้ายของทุก method)
 
     /**
-     * 
-     * @param capacity คือ
+     * สร้างกองเปล่าที่มีความจุสูงสุดตามที่กำหนดในตอนสร้าง
+     * @param capacity คือ ความจุสูงสุดของกอง
+     * @throws IllegalArgumentException ถ้า capacity < 0
      */
     public BoundedStack(int capacity){
-        elements = new ArrayList<>();
-        this.capacity = capacity ;
+        if (capacity < 0) {
+            throw new IllegalArgumentException("capacity ห้ามติดลบ: " + capacity);
+        }
+        this.elements = new ArrayList<>();
+        this.capacity = capacity;
+        checkRep();
     }
 
     /**
-     * 
-     * @param s คือ
-     * 
+     * เพิ่มโต๊ะใหม่เข้ากอง
+     * @param s ชื่อโต๊ะที่จะเพิ่ม
+     * @throws IllegalArgumentException ถ้า s เป็น null
+     * @throws IllegalStateException ถ้ากองเต็ม
      */
     public void push(String s){
-
+        if (s == null) {
+            throw new IllegalArgumentException("โต๊ะห้ามเป็น null");
+        }
+        if (isFull()) {
+            throw new IllegalStateException("กองเต็ม");
+        }
+        elements.add(s);
+        checkRep();
     }
+    
 
 
-
-
-
-
-
-
+    /** checkRep */
+    private void checkRep() {
+        assert elements != null : "elements ต้องไม่เป็น null";
+        assert capacity >= 0 : "capacity ต้องไม่ติดลบ";
+        assert 0 <= elements.size() && elements.size() <= capacity : "จำนวนโต๊ะว่างต้องไม่เกิน capacity";
+        for (String s : elements) {
+            assert s != null : "โต๊ะว่างแต่ละตัวต้องไม่เป็น null";
+        }
+    }
 }
