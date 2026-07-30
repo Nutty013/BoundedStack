@@ -27,10 +27,9 @@ public class BoundedStackTest {
         //*
         // เขียน test
         testNegativeCapacity();// ถ้า capacity ติดลบ → exception
-        // capacity=0 → isEmpty() และ isFull() เป็นจริง ถ้า push/pop → exception
-        
+        testZeroCapacityStartsEmptyAndFull();// capacity=0 → isEmpty() และ isFull() เป็นจริง ถ้า push/pop → exception
          /* Push */
-        // push แล้ว pop ต้องได้ลำดับย้อนกลับ
+        testPushIncreasesSizeAndIsLIFO();// push แล้ว pop ต้องได้ลำดับย้อนกลับ
         testPushNoNull();// push เป็น null → exception
         testPushTable();// push ตรวจสอบจำนวนโต๊ะ
         testPushRejectsWhenFull();// push เมื่อเต็ม → exception
@@ -45,8 +44,8 @@ public class BoundedStackTest {
         // isEmpty() และ isFull() ต้องเปลี่ยนแปลงตามสถานะ
         // capacity ไม่ควรเปลี่ยนแปลง
         /* Copy เคสสำเนาแยก */
-        // copy ต้องเป็นอิสระจาก stack ต้นฉบับ
-        // copy ต้องคงเดิมลำดับและสถานะว่าง
+        testCopyIsFullyIndependent();// copy ต้องเป็นอิสระจาก stack ต้นฉบับ
+        testCopyOrderAndEmptyCase();// copy ต้องคงเดิมลำดับและสถานะว่าง
         /* Boundary Cases เคสขอบเขต */
         // capacity=1
         // ทดสอบการรีฟิล (เต็ม-ว่าง-เต็ม)
@@ -76,6 +75,41 @@ public class BoundedStackTest {
             threw = true;
         }
         check("capacity cannot be negative", threw);
+    }
+
+    private static void testZeroCapacityStartsEmptyAndFull() {
+        //capacity=0 → isEmpty() และ isFull() เป็นจริง ถ้า push/pop → exception
+        BoundedStack s = new BoundedStack(0);
+        check("capacity=0 -> both isEmpty and isFull", s.isEmpty() && s.isFull());
+ 
+        boolean pushThrew = false;
+        try {
+            s.push("table1");
+        } catch (IllegalStateException e) {
+            pushThrew = true;
+        }
+        check("capacity=0 -> push throws IllegalStateException", pushThrew);
+ 
+        boolean popThrew = false;
+        try {
+            s.pop();
+        } catch (IllegalStateException e) {
+            popThrew = true;
+        }
+        check("capacity=0 -> pop throws IllegalStateException", popThrew);
+    }
+
+    private static void testPushIncreasesSizeAndIsLIFO() {
+        // push แล้ว pop ต้องได้ลำดับย้อนกลับ
+        BoundedStack s = new BoundedStack(3);
+        s.push("table1");
+        s.push("table2");
+        s.push("table3");
+        check("push increases size and order is LIFO",
+                s.size() == 3
+                        && s.pop().equals("table3")
+                        && s.pop().equals("table2")
+                        && s.pop().equals("table1"));
     }
 
     private static void testPushNoNull() {
@@ -154,5 +188,27 @@ public class BoundedStackTest {
             threw = true;
         }
         check("peek when empty -> IllegalStateException", threw);
+    }
+        /* Copy */
+    private static void testCopyIsFullyIndependent() {
+        // copy ต้องเป็นอิสระจาก stack ต้นฉบับ
+        BoundedStack original = new BoundedStack(3);
+        original.push("table1");
+        BoundedStack clone = original.copy();
+        clone.push("table2");
+        original.push("table9");
+        check("copy is independent (original and copy can be modified separately)",
+                original.size() == 2 && clone.size() == 2 && clone.peek().equals("table2"));
+    }
+ 
+    private static void testCopyOrderAndEmptyCase() {
+        // copy ต้องคงเดิมลำดับและสถานะว่าง
+        BoundedStack original = new BoundedStack(3);
+        original.push("table7");
+        original.push("table8");
+        BoundedStack clone = original.copy();
+        boolean ok = clone.pop().equals("table8") && clone.pop().equals("table7");
+        BoundedStack emptyClone = new BoundedStack(3).copy();
+        check("copy preserves order and can create an empty copy", ok && emptyClone.isEmpty());
     }
 }
