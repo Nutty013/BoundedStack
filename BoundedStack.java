@@ -32,7 +32,7 @@ public class BoundedStack {
     /**
      * สร้างกองเปล่าที่มีความจุสูงสุดตามที่กำหนดในตอนสร้าง
      * @param capacity คือ ความจุสูงสุดของกอง
-     * @throws IllegalArgumentException ถ้า capacity < 0 หรือ capacity > 50
+     * @throws IllegalArgumentException ถ้า capacity < 0
      */
     public BoundedStack(int capacity){
         if (capacity < 0 || capacity > 50) {
