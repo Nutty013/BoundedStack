@@ -64,18 +64,26 @@ public class BoundedStack {
      * @return ชื่อโต๊ะที่ว่างล่าสุด
      * @throws IllegalStateException ถ้ากองว่าง
      */
-    //public String pop() {
-    //
-    //}
+    public String pop() {
+        if (elements.isEmpty()) {
+        throw new IllegalStateException("กองว่าง");
+        }
+        String s = elements.remove(elements.size() - 1);
+        checkRep();
+        return s;
+    }
 
     /**
      * ดูว่ากองเต็มหรือไม่โดยไม่เอาโต๊ะออก
      * @return true ถ้ากองเต็ม, false ถ้าไม่เต็ม
      * @throws IllegalStateException ถ้ากองว่าง
      */
-    //public String peek() {
-    //
-    //}
+    public String peek() {
+        if (elements.isEmpty()) {
+        throw new IllegalStateException("กองว่าง");
+        }
+        return elements.get(elements.size() - 1);
+    }
 
     /** ล้างกอง */
     public void clear() {
