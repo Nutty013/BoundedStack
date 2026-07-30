@@ -18,7 +18,7 @@ public class BoundedStack {
 
     //Representation Invariant :RI =
     //elements != null
-    //capacity >= 0
+    //0 <= capacity <= 50
     //0 <= elements.size() <= capacity
     //ไม่มีสมาชิกใดใน elements เป็น null
     
@@ -35,8 +35,8 @@ public class BoundedStack {
      * @throws IllegalArgumentException ถ้า capacity < 0
      */
     public BoundedStack(int capacity){
-        if (capacity < 0) {
-            throw new IllegalArgumentException("capacity negative -> IllegalArgumentException");
+        if (capacity < 0 || capacity > 50) {
+            throw new IllegalArgumentException("capacity out of bounds -> IllegalArgumentException");
         }
         this.elements = new ArrayList<>();
         this.capacity = capacity;
@@ -126,7 +126,7 @@ public class BoundedStack {
     /** checkRep */
     private void checkRep() {
         assert elements != null : "elements not null";
-        assert capacity >= 0 : "capacity not negative";
+        assert capacity >= 0 && capacity <= 50 : "capacity out of bounds";
         assert 0 <= elements.size() && elements.size() <= capacity : "elements size < capacity";
         for (String s : elements) {
             assert s != null : "elements not null";
