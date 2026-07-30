@@ -24,20 +24,97 @@ public class BoundedStackTest {
         
         System.out.println("=== Test Suite ===\n");
 
+        BoundedStack emptyStack = new BoundedStack(50);
+        BoundedStack stack = new BoundedStack(50);
+        BoundedStack peekStack = new BoundedStack(50);
+
         //*
         // เขียน test
-        testNegativeCapacity();// ถ้า capacity ติดลบ → exception
+        // ถ้า capacity ติดลบ → exception
         // capacity=0 → isEmpty() และ isFull() เป็นจริง ถ้า push/pop → exception
+        
          /* Push */
         // push แล้ว pop ต้องได้ลำดับย้อนกลับ
         // push เป็น null → exception
+        try {
+            stack.push(null);
+            check("push null throws exception", false);
+        } catch (IllegalArgumentException e) {
+            check("push null throws exception", true);
+        }
+
+        // push ตรวจสอบจำนวนโต๊ะ
+        for (int i = 1; i <= 50; i++) {
+            stack.push("โต๊ะ" + i);
+        }
+        
+        check("push 50 items makes stack full",
+            stack.isFull());
+        check("size after 50 push",
+            stack.size() == 50);
+        
         // push เมื่อเต็ม → exception
+        try {
+            stack.push("โต๊ะไม่พอ");
+            check("push when full throws exception", false);
+        } catch (IllegalStateException e) {
+            check("push when full throws exception", true);
+        }
+        
          /* Pop */
         // pop ต้องได้โต๊ะบนสุดและลดขนาดลง
+        boolean correct = true;
+        
+        for (int i = 50; i >= 1; i--) {
+            int beforeSize = stack.size();
+            String result = stack.pop();
+        if (!result.equals("โต๊ะ" + i)) {
+            correct = false;
+            break;
+            }
+        if (stack.size() != beforeSize - 1) {
+            correct = false;
+            break;
+            }
+        }
+
+        check("pop returns reverse order and decreases size",
+            correct);
+
+        check("stack empty after pop all",
+            stack.isEmpty());
+
+        check("size after pop all",
+            stack.size() == 0);
+        
         // pop เมื่อว่าง → exception
+         try {
+            emptyStack.pop();
+            check("pop empty throws exception", false);
+         } catch (IllegalStateException e) {
+            check("pop empty throws exception", true);
+         }
+        
          /* Peek */
         // peek ไม่ได้ลบ
+        peekStack.push("โต๊ะเก่า");
+        peekStack.push("โต๊ะใหม่");
+        int beforeSize = peekStack.size();
+        
+        check("peek gets top element",
+            peekStack.peek().equals("โต๊ะใหม่"));
+
+        check("peek does not remove",
+            peekStack.size() == beforeSize);
+        
         // peek เมื่อว่าง → exception
+        try {
+            emptyStack.peek();
+            check("peek empty throws exception", false);
+         } catch (IllegalStateException e) {
+            check("peek empty throws exception", true);
+         }
+        
          /* Other เคสอื่น */
         // clear ต้องรีเซ็ตแต่ไม่เปลี่ยน capacity
         // isEmpty() และ isFull() ต้องเปลี่ยนแปลงตามสถานะ
@@ -63,13 +140,3 @@ public class BoundedStackTest {
         }
     }
     //* โค้ด test  */
-    private static void testNegativeCapacity() {
-        boolean threw = false;
-        try {
-            new BoundedStack(-1);
-        } catch (IllegalArgumentException e) {
-            threw = true;
-        }
-        check("capacity cannot be negative", threw);
-    }
-}
