@@ -26,7 +26,7 @@ public class BoundedStackTest {
 
         //*
         // เขียน test
-        // ถ้า capacity ติดลบ → exception
+        testNegativeCapacity();// ถ้า capacity ติดลบ → exception
         // capacity=0 → isEmpty() และ isFull() เป็นจริง ถ้า push/pop → exception
          /* Push */
         // push แล้ว pop ต้องได้ลำดับย้อนกลับ
@@ -63,4 +63,13 @@ public class BoundedStackTest {
         }
     }
     //* โค้ด test  */
+    private static void testNegativeCapacity() {
+        boolean threw = false;
+        try {
+            new BoundedStack(-1);
+        } catch (IllegalArgumentException e) {
+            threw = true;
+        }
+        check("capacity cannot be negative", threw);
+    }
 }
