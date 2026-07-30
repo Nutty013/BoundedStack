@@ -26,7 +26,30 @@ public class BoundedStackTest {
 
         //*
         // เขียน test
-        //
+        // ถ้า capacity ติดลบ → exception
+        // capacity=0 → isEmpty() และ isFull() เป็นจริง ถ้า push/pop → exception
+         /* Push */
+        // push แล้ว pop ต้องได้ลำดับย้อนกลับ
+        // push เป็น null → exception
+        // push เมื่อเต็ม → exception
+         /* Pop */
+        // pop ต้องได้โต๊ะบนสุดและลดขนาดลง
+        // pop เมื่อว่าง → exception
+         /* Peek */
+        // peek ไม่ได้ลบ
+        // peek เมื่อว่าง → exception
+         /* Other เคสอื่น */
+        // clear ต้องรีเซ็ตแต่ไม่เปลี่ยน capacity
+        // isEmpty() และ isFull() ต้องเปลี่ยนแปลงตามสถานะ
+        // capacity ไม่ควรเปลี่ยนแปลง
+        /* Copy เคสสำเนาแยก */
+        // copy ต้องเป็นอิสระจาก stack ต้นฉบับ
+        // copy ต้องคงเดิมลำดับและสถานะว่าง
+        /* Boundary Cases เคสขอบเขต */
+        // capacity=1
+        // ทดสอบการรีฟิล (เต็ม-ว่าง-เต็ม)
+        // ทดสอบการ push/pop แบบสลับกัน
+        // ทดสอบสถานะใกล้เต็ม
         // */
 
         System.out.println("\n=== Summary ===");
