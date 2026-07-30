@@ -77,8 +77,31 @@ public class BoundedStack {
     //
     //}
 
-    
+    /** ล้างกอง */
+    public void clear() {
+        elements.clear();
+        checkRep();
+    }
 
+    /** เช็คจำนวนโต๊ะว่าง */
+    public int size() {
+        return elements.size();
+    }
+
+    /** เช็คความจุของกอง */
+    public int capacity() {
+        return capacity;
+    }
+
+    /** ตรวจสอบว่ากองว่างหรือไม่ */
+    public boolean isEmpty() {
+        return elements.isEmpty();
+    }
+
+    /** ตรวจสอบกองเต็มหรือไม่ */
+    public boolean isFull() {
+        return size() == capacity();
+    }
 
     /** checkRep */
     private void checkRep() {
