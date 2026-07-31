@@ -1,38 +1,135 @@
-// from 6821600996 ณัฐชา กาลัญญู และ 6821601631 อรพินทุ์ ศรีเผือด
+// By 6821600996 ณัฐชา กาลัญญู และ 6821601631 อรพินทุ์ ศรีเผือด
 
-public BoundedStack{
-
-     // TODO 1: เขียน Abstraction Function ตรงนี้
-    // Abstraction Function:
-    //   AF(items, top, capacity) = Stack ที่เก็บข้อมูลจำนวน top ตัวแรกใน items
-    //   โดย items[0] คือข้อมูลที่อยู่ล่างสุดของ Stack
-    //   และ items[top-1] คือข้อมูลที่อยู่บนสุดของ Stack
-    //   ข้อมูลสามารถถูกนำออกได้ตามหลัก LIFO (Last In First Out)
-
-    // TODO 2: เขียน Representation Invariant ตรงนี้ (4 ข้อ)
-    // Representation Invariant:
-    // 1. items ต้องไม่เป็น null
-    // 2. capacity ต้องมีค่าระหว่าง 0 ถึง MAX_CAPACITY
-    // 3. top ต้องมีค่าระหว่าง 0 ถึง capacity
-    // 4. ข้อมูลทุกตัวใน items ตั้งแต่ index 0 ถึง top-1 ต้องไม่เป็น null
-
-    // TODO 3: เขียน Safety from rep exposure ตรงนี้
-    // Safety from rep exposure:
-    // ป้องกันไม่ให้ representation ภายในถูกแก้ไขจากภายนอกได้
-    // ไม่คืนค่า array items ออกไปโดยตรง
-    // ถ้าต้องส่งข้อมูลออกจะต้องสร้าง defensive copy ก่อน
-    // และข้อมูลที่รับเข้ามาจากภายนอกต้องถูกตรวจสอบก่อนนำมาเก็บ
-
-    // TODO 4: เขียนเงื่อนไขในการเพิ่มลดข้อมูล
-    // 1. สามารถเพิ่มข้อมูลได้เมื่อจำนวนข้อมูลยังไม่เต็ม capacity
-    // 2. ไม่สามารถ push ข้อมูลเพิ่มเมื่อ Stack เต็ม
-    // 3. ไม่สามารถ push ค่า null เข้า Stack ได้
-    // 4. สามารถนำข้อมูลออกได้เมื่อ Stack มีข้อมูล
-    // 5. ไม่สามารถ pop หรือ peek เมื่อ Stack ว่าง
-
-     // TODO 5: เขียน checkRep()
-    // แปลง RI ทุกข้อเป็น assert หนึ่งบรรทัด พร้อมข้อความอธิบาย
-
-  
-
-}
+**BoundedStack Design Document**
+	ภาพรวม
+`BoundedStack` เป็นโครงสร้างข้อมูลแบบ **Bounded Stack** (Stack ที่มีความจุจำกัดอยู่ไว้สูงสุดที่ 50) ใช้จำลอง **กองโต๊ะว่างของร้านหมาล่า**
+แนวคิดของระบบคือ
+- push() = นำโต๊ะที่เพิ่งเก็บเสร็จกลับเข้ากอง
+- pop()  = นำโต๊ะที่ว่างล่าสุดออกไปให้ลูกค้าคิวถัดไป
+- peek() = ดูโต๊ะบนสุดโดยไม่นำออก
+โครงสร้างข้อมูลทำงานตามหลัก **LIFO (Last In, First Out)**
+---
+	Representation
+private final List<String> elements;
+private final int capacity;
+```
+-elements เก็บรายชื่อโต๊ะทั้งหมดในกอง
+-capacity คือจำนวนโต๊ะสูงสุดที่กองสามารถเก็บได้
+-ทั้งสอง field เป็น `private final` เพื่อป้องกันการแก้ไขจากภายนอก
+---
+	Abstraction Function (AF)
+ให้ AF(elements, capacity) แทนกองโต๊ะว่างที่มีลำดับดังนี้
+- elements.get(0) คือโต๊ะล่างสุดของกอง
+- elements.get(size-1) คือโต๊ะบนสุดของกอง
+- elements ว่าง หมายถึงไม่มีโต๊ะว่างอยู่ในกอง
+---
+	Representation Invariant (RI)
+Representation ของ object ต้องเป็นจริงเสมอว่า elements != null
+-0 <= capacity <= 50
+-0 <= elements.size() <= capacity
+-ไม่มีสมาชิกใดใน elements เป็น null
+```
+checkRep() ถูกเรียกหลังจากทุก operation ที่อาจเปลี่ยน representation เพื่อยืนยันว่า RI ยังเป็นจริง
+---
+	Safety from Representation Exposure
+คลาสนี้ป้องกัน Representation Exposure ดังนี้
+- ใช้ `private final` สำหรับทุก field
+- ไม่มี method ใดคืนค่า reference ของ `elements`
+- การสร้างสำเนา (`copy()`) จะสร้าง object ใหม่ ไม่ใช้รายการเดิมร่วมกัน
+- ตรวจสอบ RI ด้วย `checkRep()` หลังมีการเปลี่ยนแปลงข้อมูล
+---
+Operation Specifications
+---
+	Constructor
+```java BoundedStack(int capacity)```
+Preconditions
+ `0 <= capacity <= 50`
+Effects
+- สร้างกองว่าง
+- กำหนดความจุสูงสุดของกอง
+Exceptions
+-IllegalArgumentException`
+- เมื่อ `capacity < 0`
+- เมื่อ `capacity > 50`
+---
+	push(String s)
+Preconditions
+- `s != null`
+- Stack ยังไม่เต็ม
+Effects
+- เพิ่มโต๊ะไว้ด้านบนสุดของกอง
+Exceptions
+-`IllegalArgumentException`
+-เมื่อ `s == null`
+-`IllegalStateException`
+-เมื่อ Stack เต็ม
+---
+    pop()
+Preconditions
+- Stack ต้องไม่ว่าง
+Effects
+- นำโต๊ะบนสุดออกจากกอง
+- คืนค่าชื่อโต๊ะนั้น
+Exceptions
+- `IllegalStateException`
+- เมื่อ Stack ว่าง
+---
+	peek()
+Preconditions
+- Stack ต้องไม่ว่าง
+Effects
+-คืนค่าชื่อโต๊ะบนสุด
+-ไม่ลบข้อมูลออกจากกอง
+Exceptions
+-`IllegalStateException`
+-เมื่อ Stack ว่าง
+---
+	clear()
+Effects
+- ลบข้อมูลทั้งหมดในกอง
+- ความจุ (`capacity`) ไม่เปลี่ยน
+---
+    size()
+Returns จำนวนโต๊ะในกอง
+---
+	capacity()
+Returns ความจุสูงสุดของกอง
+---
+	isEmpty()
+Returns
+-`true` เมื่อกองว่าง
+-`false` เมื่อมีกองข้อมูล
+---
+	isFull()
+Returns
+-`true` เมื่อจำนวนโต๊ะเท่ากับความจุ
+-`false` ในกรณีอื่น
+---
+	copy()
+Effects
+สร้าง `BoundedStack` ใหม่ที่...
+-มี `capacity` เท่ากัน
+-มีข้อมูลเหมือนต้นฉบับ
+-เป็น object คนละตัวกับต้นฉบับ
+-สามารถแก้ไขแยกจากกันได้อย่างอิสระ
+---
+	Design Decisions
+การออกแบบหลักของโปรเจกต์ BoundedStack นี้มีดังนี้
+1. ใช้ `List<String>` แทน array เพื่อให้เพิ่มและลบข้อมูลจากด้านบนของ Stack ได้สะดวก
+2. กำหนดความจุของ Stack ตั้งแต่สร้าง object และไม่อนุญาตให้เปลี่ยนภายหลัง
+3. ใช้ `checkRep()` เพื่อตรวจสอบ Representation Invariant หลังการเปลี่ยนแปลงข้อมูลทุกครั้ง
+4. ใช้โมเดล "กองโต๊ะว่างของร้านหมาล่า" เพื่ออธิบายหลักการทำงานของ Stack ตามแนวคิด LIFO (Last In, First Out) กล่าวคือ โต๊ะที่เพิ่งเก็บเสร็จล่าสุดจะถูกนำไปใช้งานก่อน
+---
+		Complexity (Big O)
+| Operation   | Time Complexity  |
+| ----------- | ---------------- |
+| Constructor | O(1)             |
+| push        | O(1)             |
+| pop         | O(1)             |
+| peek        | O(1)             |
+| clear       | O(n)             |
+| size        | O(1)             |
+| capacity    | O(1)             |
+| isEmpty     | O(1)             |
+| isFull      | O(1)             |
+| copy        | O(n)             |
