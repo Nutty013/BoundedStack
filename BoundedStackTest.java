@@ -51,7 +51,7 @@ public class BoundedStackTest {
         /* Boundary Cases เคสขอบเขต */
         // capacity=1
         // ทดสอบการรีฟิล (เต็ม-ว่าง-เต็ม)
-        // ทดสอบการ push/pop แบบสลับกัน
+        testPushAndPop();// ทดสอบการ push/pop แบบสลับกัน
         // ทดสอบสถานะใกล้เต็ม
         // */
 
@@ -275,5 +275,22 @@ public class BoundedStackTest {
         boolean ok = clone.pop().equals("table8") && clone.pop().equals("table7");
         BoundedStack emptyClone = new BoundedStack(3).copy();
         check("copy preserves order and can create an empty copy", ok && emptyClone.isEmpty());
+    }
+
+     /* Boundary Cases */
+    
+    private static void testPushAndPop() {
+        // ทดสอบการ push/pop แบบสลับกัน
+        BoundedStack s = new BoundedStack(3);
+        s.push("table1");
+        s.push("table2");
+        s.pop();
+        s.push("table3");
+        s.push("table4");
+        check("swapping push/pop remains correct order and size",
+                s.size() == 3
+                        && s.pop().equals("table4")
+                        && s.pop().equals("table3")
+                        && s.pop().equals("table1"));
     }
 }
