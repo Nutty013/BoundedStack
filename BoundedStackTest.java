@@ -52,7 +52,7 @@ public class BoundedStackTest {
         // capacity=1
         // ทดสอบการรีฟิล (เต็ม-ว่าง-เต็ม)
         testPushAndPop();// ทดสอบการ push/pop แบบสลับกัน
-        // ทดสอบสถานะใกล้เต็ม
+        testAlmostFull();// ทดสอบสถานะใกล้เต็ม
         // */
 
         System.out.println("\n=== Summary ===");
@@ -100,7 +100,6 @@ public class BoundedStackTest {
         //capacity=0 → เมื่อว่างและเต็มจะเป็นจริง ถ้า push/pop → exception
         BoundedStack s = new BoundedStack(0);
         check("capacity=0 -> both isEmpty and isFull", s.isEmpty() && s.isFull());
- 
         boolean pushThrew = false;
         try {
             s.push("table1");
@@ -169,7 +168,7 @@ public class BoundedStackTest {
     }
         
          /* Pop */
-        private static void testPopReturnsTopAndShrinks() {
+    private static void testPopReturnsTopAndShrinks() {
         // pop ต้องได้โต๊ะบนสุดและลดขนาดลง
         BoundedStack s = new BoundedStack(2);
         s.push("table10");
@@ -177,7 +176,7 @@ public class BoundedStackTest {
     }
 
         
-        private static void testPopRejectsWhenEmpty() {
+    private static void testPopRejectsWhenEmpty() {
         // pop เมื่อว่าง → exception
         BoundedStack s = new BoundedStack(2);
         boolean threw = false;
@@ -190,14 +189,14 @@ public class BoundedStackTest {
     }
         
          /* Peek */
-        private static void testPeekDoesNotRemove() {
+    private static void testPeekDoesNotRemove() {
         // peek ไม่ได้ลบ
         BoundedStack s = new BoundedStack(3);
         s.push("table1");
         s.push("table2");
         check("peek when not empty -> returns top element without decreasing size", s.peek().equals("table2") && s.size() == 2);
     }
-        private static void testPeekRejectsWhenEmpty() {
+    private static void testPeekRejectsWhenEmpty() {
         // peek เมื่อว่าง → exception
         BoundedStack s = new BoundedStack(1);
         boolean threw = false;
@@ -279,7 +278,7 @@ public class BoundedStackTest {
 
         /* Boundary Cases */
 
-        private static void testPushAndPop() {
+    private static void testPushAndPop() {
         // ทดสอบการ push/pop แบบสลับกัน
         BoundedStack s = new BoundedStack(3);
         s.push("table1");
@@ -293,4 +292,13 @@ public class BoundedStackTest {
                         && s.pop().equals("table3")
                         && s.pop().equals("table1"));
     }
+    private static void testAlmostFull() {
+            // ทดสอบสถานะใกล้เต็ม
+            BoundedStack s = new BoundedStack(3);
+            s.push("table1");
+            s.push("table2");
+            check("size almost full", s.size() == 2 && !s.isFull());
+            s.push("table3");
+            check("stack is full", s.isFull());
+        }
 }
