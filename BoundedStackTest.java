@@ -27,6 +27,8 @@ public class BoundedStackTest {
         //*
         // เขียน test
         testNegativeCapacity();// ถ้า capacity ติดลบ → exception
+        testCapacityAboveMax();// capacity > 50 → exception
+        testCapacityExactlyMax();// capacity = 50
         testZeroCapacityStartsEmptyAndFull();// capacity=0 → isEmpty() และ isFull() เป็นจริง ถ้า push/pop → exception
          /* Push */
         testPushIncreasesSizeAndIsLIFO();// push แล้ว pop ต้องได้ลำดับย้อนกลับ
@@ -75,6 +77,23 @@ public class BoundedStackTest {
             threw = true;
         }
         check("capacity cannot be negative", threw);
+    }
+
+   private static void testCapacityAboveMax() {
+        // capacity > 50 → exception
+        boolean threw = false;
+        try {
+            new BoundedStack(51);
+        } catch (IllegalArgumentException e) {
+            threw = true;
+        }
+        check("capacity=51 (above 50) -> IllegalArgumentException", threw);
+    }
+
+    private static void testCapacityExactlyMax() {
+        // capacity = 50 
+        BoundedStack s = new BoundedStack(50);
+        check("capacity=50 (at max) -> pass", s.capacity() == 50 && s.isEmpty());
     }
 
     private static void testZeroCapacityStartsEmptyAndFull() {
