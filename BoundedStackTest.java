@@ -253,10 +253,29 @@ public class BoundedStackTest {
         check("capacity remains unchanged",
             c1 == c2);
     }
-
+        /* Copy */
+    private static void testCopyIsFullyIndependent() {
+        // copy ต้องเป็นอิสระจาก stack ต้นฉบับ
+        BoundedStack original = new BoundedStack(3);
+        original.push("table1");
+        BoundedStack clone = original.copy();
+        clone.push("table2");
+        original.push("table9");
+        check("copy is independent (original and copy can be modified separately)",
+                original.size() == 2 && clone.size() == 2 && clone.peek().equals("table2"));
+    }
+ 
+    private static void testCopyOrderAndEmptyCase() {
+        // copy ต้องคงเดิมลำดับและสถานะว่าง
+        BoundedStack original = new BoundedStack(3);
+        original.push("table7");
+        original.push("table8");
+        BoundedStack clone = original.copy();
+        boolean ok = clone.pop().equals("table8") && clone.pop().equals("table7");
+        BoundedStack emptyClone = new BoundedStack(3).copy();
+        check("copy preserves order and can create an empty copy", ok && emptyClone.isEmpty());
+    }
     /* Boundary Cases */
-
-        /* Capacity=1 */
     private static void testCapacityOne() {
         // capacity=1
         BoundedStack s = new BoundedStack(1);
@@ -269,13 +288,9 @@ public class BoundedStackTest {
         } catch (IllegalStateException e) {
             threw = true;
         }
-        check("capacity=1 works correctly",
-            startEmpty
-            && afterPush
-            && threw);
+        check("capacity=1 works correctly",startEmpty && afterPush && threw);
     }
 
-        /* รีฟิล */
     private static void testCapacityOneRefill() {
         // ทดสอบการรีฟิล (เต็ม-ว่าง-เต็ม)
         BoundedStack s = new BoundedStack(1);
@@ -315,27 +330,4 @@ public class BoundedStackTest {
             check("full stack size is correct",
                 s.size() == 3);
         }
-
-        /* Copy */
-    private static void testCopyIsFullyIndependent() {
-        // copy ต้องเป็นอิสระจาก stack ต้นฉบับ
-        BoundedStack original = new BoundedStack(3);
-        original.push("table1");
-        BoundedStack clone = original.copy();
-        clone.push("table2");
-        original.push("table9");
-        check("copy is independent (original and copy can be modified separately)",
-                original.size() == 2 && clone.size() == 2 && clone.peek().equals("table2"));
-    }
- 
-    private static void testCopyOrderAndEmptyCase() {
-        // copy ต้องคงเดิมลำดับและสถานะว่าง
-        BoundedStack original = new BoundedStack(3);
-        original.push("table7");
-        original.push("table8");
-        BoundedStack clone = original.copy();
-        boolean ok = clone.pop().equals("table8") && clone.pop().equals("table7");
-        BoundedStack emptyClone = new BoundedStack(3).copy();
-        check("copy preserves order and can create an empty copy", ok && emptyClone.isEmpty());
-    }
 }
