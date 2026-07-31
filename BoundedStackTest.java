@@ -40,9 +40,9 @@ public class BoundedStackTest {
         testPeekDoesNotRemove();// peek ไม่ได้ลบ
         testPeekRejectsWhenEmpty();// peek เมื่อว่าง → exception  
          /* Other เคสอื่น */
-        // clear ต้องรีเซ็ตแต่ไม่เปลี่ยน capacity
-        // isEmpty() และ isFull() ต้องเปลี่ยนแปลงตามสถานะ
-        // capacity ไม่ควรเปลี่ยนแปลง
+        testClear();// clear ต้องรีเซ็ตแต่ไม่เปลี่ยน capacity
+        testEmptyFullStateChanges();// isEmpty() และ isFull() ต้องเปลี่ยนแปลงตามสถานะ
+        testCapacityNeverChanges();// capacity ไม่ควรเปลี่ยนแปลง
         /* Copy เคสสำเนาแยก */
         testCopyIsFullyIndependent();// copy ต้องเป็นอิสระจาก stack ต้นฉบับ
         testCopyOrderAndEmptyCase();// copy ต้องคงเดิมลำดับและสถานะว่าง
@@ -189,6 +189,52 @@ public class BoundedStackTest {
         }
         check("peek when empty -> IllegalStateException", threw);
     }
+
+    /* อื่นๆ */
+
+        /* Clear */
+    private static void testClear() {
+        // clear ต้องรีเซ็ตแต่ไม่เปลี่ยน capacity
+        BoundedStack s = new BoundedStack(5);
+        s.push("table1");
+        s.push("table2");
+        int oldCapacity = s.capacity();
+        s.clear();
+        check("clear resets stack but keeps capacity",
+            s.isEmpty()
+            && s.size() == 0
+            && s.capacity() == oldCapacity);
+    }
+
+        /* isEmpty&isFull */
+    private static void testEmptyFullStateChanges() {
+        // isEmpty() และ isFull() ต้องเปลี่ยนแปลงตามสถานะ
+        BoundedStack s = new BoundedStack(2);
+        boolean start = s.isEmpty() && !s.isFull();
+        s.push("table1");
+        boolean middle = !s.isEmpty() && !s.isFull();
+        s.push("table2");
+        boolean full = !s.isEmpty() && s.isFull();
+        s.pop();
+        boolean afterPop = !s.isEmpty() && !s.isFull();
+        check("isEmpty and isFull change correctly",
+            start && middle && full && afterPop);
+    }
+
+        /* Capacity */
+    private static void testCapacityNeverChanges() {
+        // capacity ไม่ควรเปลี่ยนแปลง
+        BoundedStack s = new BoundedStack(10);
+        int c1 = s.capacity();
+        s.push("A");
+        s.push("B");
+        s.pop();
+        s.clear();
+        int c2 = s.capacity();
+        check("capacity remains unchanged",
+            c1 == c2);
+    }
+
         /* Copy */
     private static void testCopyIsFullyIndependent() {
         // copy ต้องเป็นอิสระจาก stack ต้นฉบับ
