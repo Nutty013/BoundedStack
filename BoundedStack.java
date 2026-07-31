@@ -8,6 +8,8 @@ import java.util.*;
  */
 
 public class BoundedStack {
+    /* ความจุสูงสุดของกอง */
+    private static final int MAX_CAPACITY = 50;
 
     //Abstraction Function :
     // AF(elements, capacity) = กองโต๊ะว่างของร้านหมาล่า เรียงตามตอนที่โต๊ะถูกคืนเข้ามา
@@ -18,7 +20,7 @@ public class BoundedStack {
 
     //Representation Invariant :RI =
     //elements != null
-    //0 <= capacity <= 50
+    //0 <= capacity <= MAX_CAPACITY (50)
     //0 <= elements.size() <= capacity
     //ไม่มีสมาชิกใดใน elements เป็น null
     
@@ -29,13 +31,23 @@ public class BoundedStack {
     private final List<String> elements ;
     private final int capacity ;
 
+    /** checkRep */
+    private void checkRep() {
+        assert elements != null : "elements not null";
+        assert capacity >= 0 && capacity <= MAX_CAPACITY: "capacity out of bounds";
+        assert 0 <= elements.size() && elements.size() <= capacity : "elements size < capacity";
+        for (String s : elements) {
+            assert s != null : "elements not null";
+        }
+    }
+
     /**
      * สร้างกองเปล่าที่มีความจุสูงสุดตามที่กำหนดในตอนสร้าง
      * @param capacity คือ ความจุสูงสุดของกอง
-     * @throws IllegalArgumentException ถ้า capacity < 0
+     * @throws IllegalArgumentException ถ้า capacity < 0 หรือ capacity > MAX_CAPACITY
      */
     public BoundedStack(int capacity){
-        if (capacity < 0 || capacity > 50) {
+        if (capacity < 0 || capacity > MAX_CAPACITY) {
             throw new IllegalArgumentException("capacity out of bounds -> IllegalArgumentException");
         }
         this.elements = new ArrayList<>();
@@ -121,15 +133,5 @@ public class BoundedStack {
         copy.elements.addAll(this.elements);
         copy.checkRep();
         return copy;
-    }
-
-    /** checkRep */
-    private void checkRep() {
-        assert elements != null : "elements not null";
-        assert capacity >= 0 && capacity <= 50 : "capacity out of bounds";
-        assert 0 <= elements.size() && elements.size() <= capacity : "elements size < capacity";
-        for (String s : elements) {
-            assert s != null : "elements not null";
-        }
     }
 }
