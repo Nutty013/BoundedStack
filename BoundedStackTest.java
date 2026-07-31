@@ -29,11 +29,11 @@ public class BoundedStackTest {
         testNegativeCapacity();// ถ้า capacity ติดลบ → exception
         testCapacityAboveMax();// capacity > 50 → exception
         testCapacityExactlyMax();// capacity = 50
-        testZeroCapacityStartsEmptyAndFull();// capacity=0 → isEmpty() และ isFull() เป็นจริง ถ้า push/pop → exception
+        testZeroCapacityStartsEmptyAndFull();// capacity=0 เมื่อว่างและเต็มจะเป็นจริง ถ้า push/pop → exception
          /* Push */
-        testPushIncreasesSizeAndIsLIFO();// push แล้ว pop ต้องได้ลำดับย้อนกลับ
+        testPushthenPopBackwards();// push แล้ว pop ต้องได้ลำดับย้อนกลับ
         testPushNoNull();// push เป็น null → exception
-        testPushTable();// push ตรวจสอบจำนวนโต๊ะ
+        testPushCountTable();// push ตรวจสอบจำนวนโต๊ะ
         testPushRejectsWhenFull();// push เมื่อเต็ม → exception
          /* Pop */
         testPopReturnsTopAndShrinks();// pop ต้องได้โต๊ะบนสุดและลดขนาดลง
@@ -97,7 +97,7 @@ public class BoundedStackTest {
     }
 
     private static void testZeroCapacityStartsEmptyAndFull() {
-        //capacity=0 → isEmpty() และ isFull() เป็นจริง ถ้า push/pop → exception
+        //capacity=0 → เมื่อว่างและเต็มจะเป็นจริง ถ้า push/pop → exception
         BoundedStack s = new BoundedStack(0);
         check("capacity=0 -> both isEmpty and isFull", s.isEmpty() && s.isFull());
  
@@ -118,13 +118,13 @@ public class BoundedStackTest {
         check("capacity=0 -> pop throws IllegalStateException", popThrew);
     }
 
-    private static void testPushIncreasesSizeAndIsLIFO() {
+    private static void testPushthenPopBackwards() {
         // push แล้ว pop ต้องได้ลำดับย้อนกลับ
         BoundedStack s = new BoundedStack(3);
         s.push("table1");
         s.push("table2");
         s.push("table3");
-        check("push increases size and order is LIFO",
+        check("push then pop returns elements in reverse order",
                 s.size() == 3
                         && s.pop().equals("table3")
                         && s.pop().equals("table2")
@@ -143,11 +143,11 @@ public class BoundedStackTest {
         check("push(null) -> IllegalArgumentException", threw);
         }
     
-    private static void testPushTable() {
+    private static void testPushCountTable() {
         // push ตรวจสอบจำนวนโต๊ะ
         BoundedStack s = new BoundedStack(50);
         for (int i = 1; i <= 50; i++) {
-            s.push("โต๊ะ" + i);
+            s.push("table" + i);
         }
         
         check("push 50 items makes stack full",
@@ -277,9 +277,9 @@ public class BoundedStackTest {
         check("copy preserves order and can create an empty copy", ok && emptyClone.isEmpty());
     }
 
-     /* Boundary Cases */
-    
-    private static void testPushAndPop() {
+        /* Boundary Cases */
+
+        private static void testPushAndPop() {
         // ทดสอบการ push/pop แบบสลับกัน
         BoundedStack s = new BoundedStack(3);
         s.push("table1");
